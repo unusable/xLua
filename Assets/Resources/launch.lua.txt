@@ -1,0 +1,15 @@
+﻿
+print 'hello world'
+
+local cubePrefab = CS.UnityEngine.Resources.Load("Cube")
+
+local cube = CS.UnityEngine.Object.Instantiate(cubePrefab)
+-- cast(cube, typeof(CS.UnityEngine.GameObject))
+
+local type = typeof(CS.UnityEngine.MeshRenderer)
+
+print('===' .. type:ToString())
+
+local renderer = cube:GetComponent(type)
+
+
