@@ -9,7 +9,7 @@ public static class GenCustomTypes
 
 // typeof(BindAnchor),
 // typeof(ExampleGenConfig),
-typeof(LuaBehaviour),
+// typeof(LuaBehaviour),
 // typeof(LuaBehaviour.BindData),
 // typeof(LuaCallCs),
 // typeof(LuaCore),

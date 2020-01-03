@@ -24,6 +24,7 @@ public class LuaCore : MonoBehaviour
     void Start()
     {
         this.lastGCTime = Time.time;
+        luaEnv.Global.Set("Instantiate", new System.Func<string, LuaTable>(this.Instantiate));
         luaEnv.DoString(string.Format("require '{0}'", this.bootstrap));
     }
 
@@ -41,6 +42,15 @@ public class LuaCore : MonoBehaviour
         this.luaEnv.Dispose();
         this.luaEnv = null;
     }
+
+    private LuaTable Instantiate(string prefabPath)
+    {
+        var prefab = Resources.Load(prefabPath);
+        GameObject obj = Object.Instantiate(prefab) as GameObject;
+        var lua = obj.GetComponent<LuaBehaviour>();
+        return lua.Bind(this.luaEnv);
+    }
+
 
 #if UNITY_EDITOR
     private static byte[] Loader(ref string filepath)

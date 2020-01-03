@@ -24,9 +24,74 @@ public static class GenConfig
     {
         List<string> namespaces = new List<string>() // 在这里添加名字空间
            {
-               "UnityEngine",
-               "UnityEngine.UI"
+"UnityEngine",
+// "UnityEngine.Accessibility",
+// "UnityEngine.AI",
+"UnityEngine.Analytics",
+// "UnityEngine.Android",
+// "UnityEngine.Animations",
+// "UnityEngine.Apple.ReplayKit",
+// "UnityEngine.Apple.TV",
+"UnityEngine.Assertions",
+"UnityEngine.Assertions.Comparers",
+"UnityEngine.Assertions.Must",
+"UnityEngine.Audio",
+"UnityEngine.CrashReportHandler",
+"UnityEngine.Diagnostics",
+"UnityEngine.Events",
+"UnityEngine.EventSystems",
+// "UnityEngine.iOS",
+"UnityEngine.Jobs",
+// "UnityEngine.Lumin",
+// "UnityEngine.Networking",
+// "UnityEngine.Networking.Match",
+// "UnityEngine.Networking.PlayerConnection",
+// "UnityEngine.Networking.Types",
+// "UnityEngine.Playables",
+// "UnityEngine.Profiling",
+// "UnityEngine.Profiling.Memory.Experimental",
+// "UnityEngine.Rendering",
+"UnityEngine.SceneManagement",
+"UnityEngine.Scripting",
+"UnityEngine.Scripting.APIUpdating",
+// "UnityEngine.Serialization",
+// "UnityEngine.SocialPlatforms",
+// "UnityEngine.SocialPlatforms.GameCenter",
+// "UnityEngine.SocialPlatforms.Impl",
+"UnityEngine.Sprites",
+// "UnityEngine.TestTools",
+// "UnityEngine.TestTools.Constraints",
+// "UnityEngine.TestTools.Utils",
+"UnityEngine.TextCore",
+// "UnityEngine.TextCore.LowLevel",
+// "UnityEngine.Tilemaps",
+// "UnityEngine.Timeline",
+// "UnityEngine.tvOS",
+// "UnityEngine.U2D",
+"UnityEngine.UI",
+// "UnityEngine.UIElements",
+// "UnityEngine.Video",
+// "UnityEngine.VR",
+// "UnityEngine.Windows",
+// "UnityEngine.Windows.Speech",
+// "UnityEngine.Windows.WebCam",
+// "UnityEngine.WSA",
+// "UnityEngine.XR",
+// "UnityEngine.XR.Provider",
+// "UnityEngine.XR.WSA",
+// "UnityEngine.XR.WSA.Input",
+// "UnityEngine.XR.WSA.Persistence",
+// "UnityEngine.XR.WSA.Sharing",
            };
+        // var l = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+        //          where !(assembly.ManifestModule is System.Reflection.Emit.ModuleBuilder)
+        //          from type in assembly.GetExportedTypes()
+        //          where type.Namespace != null && type.Namespace.StartsWith("UnityEngine.")
+        //           && !type.Namespace.StartsWith("UnityEngine.Experimental") && !type.Namespace.StartsWith("UnityEngine.Internal")
+        //          select type.Namespace).Distinct().OrderBy(_ => _);
+        // var content = string.Join("\",\n\"", l);
+        // Debug.Log("\"UnityEngin\",\n\"" + content + "\"\n");
+
         var types = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                      where !(assembly.ManifestModule is System.Reflection.Emit.ModuleBuilder)
                      from type in assembly.GetExportedTypes()
@@ -141,18 +206,31 @@ public static class " + fileName + @"
         Debug.Log("GenTypesFile: " + fileName + " completed.");
     }
 
+    private static string GetTypeName(string typeName)
+    {
+        string[] parts = typeName.Split('`');
+        var literal = parts[0];//.Replace("&", "");
+        if (parts.Length > 1)
+        {
+            int count = 0;
+            if(!int.TryParse(parts[1], out count))
+            {
+                throw new System.Exception("GetTypeName error!");
+            }
+            literal += "<" + new String(',', count - 1) + ">";
+        }
+        return literal;
+    }
 
     private static string GetTypeLiteral(Type type)
     {
-        string[] parts = type.FullName.Split('`');
-        var literal = parts[0].Replace("&", "").Replace("+", ".");
-        if (parts.Length > 1)
+        string[] typeNames = type.FullName.Split('+');
+        List<string> literal = new List<string>();
+        foreach(var t in typeNames)
         {
-            int count = int.Parse(parts[1]);
-            literal += "<" + new String(',', count - 1) + ">";
+            literal.Add(GetTypeName(t));
         }
-
-        return literal;
+        return string.Join(".", literal);
     }
 
     private static bool isObsolete(Type type)

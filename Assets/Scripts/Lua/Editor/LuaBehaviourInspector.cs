@@ -11,6 +11,10 @@ public class LuaBehaviourInspector : Editor
     {
         LuaBehaviour targetObject = this.serializedObject.targetObject as LuaBehaviour;
         LuaBehaviour.BindData[] anchors = targetObject.Anchors;
+        if (anchors == null)
+        {
+            return;
+        }
 
         for (int i = 0; i < anchors.Length; i++)
         {
@@ -56,5 +60,5 @@ public class LuaBehaviourInspector : Editor
             }
         }
     }
-    
+
 }

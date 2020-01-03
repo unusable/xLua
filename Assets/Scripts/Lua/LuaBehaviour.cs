@@ -16,18 +16,20 @@ public class LuaBehaviour : MonoBehaviour
     [XLua.BlackList]
     public BindData[] Anchors { get => this.anchors; }
 
-    private void Bind(XLua.LuaTable table)
+    public XLua.LuaTable Bind(XLua.LuaEnv env)
     {
+        var table = env.NewTable();
+        table.Set("gameObject", this.gameObject);
+        table.Set("transform", this.transform);
+
+        var binder = env.NewTable();
         foreach(var b in this.anchors)
         {
-            table.Set(b.key, b.value);
+            binder.Set(b.key, b.value);
         }
+        table.Set("binder", binder);
+        return table;
     }
 
-    public static void Bind(GameObject targetObject, XLua.LuaTable table)
-    {
-        LuaBehaviour behaviour = targetObject.GetComponent<LuaBehaviour>();
-        behaviour.Bind(table);
-    }
 
 }
